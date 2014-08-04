@@ -15,7 +15,7 @@ class tx_kbeventboard_addCategoriesToFlexForm {
 	$pagesIdList = "";
 	if (!empty($res)) {
 		$row = $GLOBALS['TYPO3_DB']->sql_fetch_assoc($res);
-		$pagesIdList = explode(",",$row['pages']);
+		$pagesIdList = \TYPO3\CMS\Core\Utility\GeneralUtility::trimExplode(",",$row['pages']);
 	}
 	if(!intval($pagesIdList[0])){
 		$pagesIdList[0] = $config['row']['pid'];
@@ -25,7 +25,7 @@ class tx_kbeventboard_addCategoriesToFlexForm {
 		$selectedPids .= (($index == 0)?"":",").$this->getRecursiveUidList($root,$recursive);
 	}
 
-	$selectedPidsList = explode(',',$selectedPids);
+	$selectedPidsList = \TYPO3\CMS\Core\Utility\GeneralUtility::trimExplode(',',$selectedPids);
 	$selectedPidsList = array_unique($selectedPidsList);
     
 	foreach($selectedPidsList as $pageId){
@@ -72,8 +72,8 @@ class tx_kbeventboard_addCategoriesToFlexForm {
 			'uid',
 			'pages',
 			'pid IN (' . $GLOBALS['TYPO3_DB']->cleanIntList($parentUid) . ') '
-				. t3lib_BEfunc::deleteClause('pages')
-				. t3lib_BEfunc::versioningPlaceholderClause('pages')
+				. \TYPO3\CMS\Backend\Utility\BackendUtility::deleteClause('pages')
+				. \TYPO3\CMS\Backend\Utility\BackendUtility::versioningPlaceholderClause('pages')
 			);
 		if($depth > 0){
 			while ($row = $GLOBALS['TYPO3_DB']->sql_fetch_assoc($res)) {

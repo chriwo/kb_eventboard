@@ -20,7 +20,7 @@ $EM_CONF[$_EXTKEY] = array(
 	'description' => 'simple Eventboard to manage events, categories and locations with template',
 	'category' => 'plugin',
 	'shy' => 0,
-	'version' => '1.0.36',
+	'version' => '2.0.0',
 	'dependencies' => '',
 	'conflicts' => '',
 	'priority' => '',
@@ -40,7 +40,7 @@ $EM_CONF[$_EXTKEY] = array(
 	'CGLcompliance_note' => '',
 	'constraints' => array(
 		'depends' => array(
-			'typo3' => '4.2.0-6.1.5',
+			'typo3' => '6.2-6.2.99',
 		),
 		'conflicts' => array(
 		),

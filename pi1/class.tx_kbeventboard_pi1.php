@@ -22,7 +22,7 @@
 *  This copyright notice MUST APPEAR in all copies of the script!
 ***************************************************************/
 
-require_once(PATH_tslib.'class.tslib_pibase.php');
+
 
 
 /**
@@ -32,7 +32,7 @@ require_once(PATH_tslib.'class.tslib_pibase.php');
  * @package	TYPO3
  * @subpackage	tx_kbeventboard
  */
-class tx_kbeventboard_pi1 extends tslib_pibase {
+class tx_kbeventboard_pi1 extends \TYPO3\CMS\Frontend\Plugin\AbstractPlugin {
 	var $prefixId      = 'tx_kbeventboard_pi1';		// Same as class name
 	var $scriptRelPath = 'pi1/class.tx_kbeventboard_pi1.php';	// Path to this script relative to the extension dir.
 	var $extKey        = 'kb_eventboard';	// The extension key.
@@ -115,7 +115,7 @@ class tx_kbeventboard_pi1 extends tslib_pibase {
 		#$this->pi_USER_INT_obj=1;	// Configuring so caching is not expected. This value means that no cHash params are ever set. We do this, because it's a USER_INT object!
 		
 		//Get Eventcontainer-PID -- Set actual page if no container is specified
-		$this->eventFolder = explode(',', $this->cObj->data['pages']);
+		$this->eventFolder = \TYPO3\CMS\Core\Utility\GeneralUtility::trimExplode(',', $this->cObj->data['pages']);
 		
 		// if there is no startingpoint, use the current page as eventfolder:
 		if(!intval($this->eventFolder[0])){
@@ -134,8 +134,8 @@ class tx_kbeventboard_pi1 extends tslib_pibase {
 		$this->startingpointRecursiveLevel = $this->cObj->data['recursive'];
 		
 		// Path to extension:
-		$this->extPath = t3lib_extmgm::extPath($this->extKey);
-		$this->extRelPath = t3lib_extmgm::siteRelPath($this->extKey);
+		$this->extPath = \TYPO3\CMS\Core\Utility\ExtensionManagementUtility::extPath($this->extKey);
+		$this->extRelPath = \TYPO3\CMS\Core\Utility\ExtensionManagementUtility::siteRelPath($this->extKey);
 
 	
 		//Set Vars
@@ -155,7 +155,7 @@ class tx_kbeventboard_pi1 extends tslib_pibase {
 		// loading template:
 		$templateflex_file = $this->pi_getFFvalue($this->cObj->data['pi_flexform'], 'template_file', 's_template');
 		if($this->pi_getFFvalue($this->cObj->data['pi_flexform'], 'template_file', 's_template') != ""  &&  strchr ( $templateflex_file, 'fileadmin' )){
-			$templateflex_file = explode("fileadmin" , $templateflex_file);
+			$templateflex_file = \TYPO3\CMS\Core\Utility\GeneralUtility::trimExplode("fileadmin" , $templateflex_file);
 			$templateflex_file = "fileadmin" . $templateflex_file[1];
 		}else{
 			$templateflex_file = 'EXT:kb_eventboard/template.tmpl';
@@ -163,7 +163,7 @@ class tx_kbeventboard_pi1 extends tslib_pibase {
 		$this->tmpl = $this->cObj->fileResource($templateflex_file);
 
 		// some vars:
-		$this->sel_categories = array_unique (explode(',',$this->pi_getFFvalue($this->cObj->data['pi_flexform'], 'sel_categories', 's_template')));
+		$this->sel_categories = array_unique (\TYPO3\CMS\Core\Utility\GeneralUtility::trimExplode(',',$this->pi_getFFvalue($this->cObj->data['pi_flexform'], 'sel_categories', 's_template')));
 		$this->step = $this->pi_getFFvalue($this->cObj->data['pi_flexform'], 'step', 's_template') ? $this->pi_getFFvalue($this->cObj->data['pi_flexform'], 'step', 's_template') : $this->conf["step"];
 		$this->csseven = $this->pi_getFFvalue($this->cObj->data['pi_flexform'], 'csseven', 's_template');
 		$this->cssodd = $this->pi_getFFvalue($this->cObj->data['pi_flexform'], 'cssodd', 's_template');
@@ -173,7 +173,7 @@ class tx_kbeventboard_pi1 extends tslib_pibase {
 		$this->showMorelink = $this->pi_getFFvalue($this->cObj->data['pi_flexform'], 'show_morelink', 's_template');
 		$this->showTitleLink = $this->pi_getFFvalue($this->cObj->data['pi_flexform'], 'showTitleLink', 's_template');
 		$this->morelinkId = $this->pi_getFFvalue($this->cObj->data['pi_flexform'], 'morelink', 's_template');
-		$this->eventid = $this->piVars['evt'] ? $this->piVars['evt'] : t3lib_div::_GET('evt');
+		$this->eventid = $this->piVars['evt'] ? $this->piVars['evt'] : \TYPO3\CMS\Core\Utility\GeneralUtility::_GET('evt');
 		$this->eventid = intval($this->eventid);
 		$this->ascDesc = $this->pi_getFFvalue($this->cObj->data['pi_flexform'], 'ascDesc', 's_template') ? ' DESC' : ' ASC';
 		$this->include_css = $this->pi_getFFvalue($this->cObj->data['pi_flexform'], 'include_css', 's_template');
@@ -192,13 +192,13 @@ class tx_kbeventboard_pi1 extends tslib_pibase {
 		if(isset($this->piVars['selectedcategory'])){
 			$this->selectedcategory = $this->piVars['selectedcategory'];
 		}else{
-			$this->selectedcategory = $GLOBALS['TYPO3_DB']->cleanIntList(t3lib_div::_POST('selectedcategory')) ? $GLOBALS['TYPO3_DB']->cleanIntList(t3lib_div::_POST('selectedcategory')) : 0;
+			$this->selectedcategory = $GLOBALS['TYPO3_DB']->cleanIntList(\TYPO3\CMS\Core\Utility\GeneralUtility::_POST('selectedcategory')) ? $GLOBALS['TYPO3_DB']->cleanIntList(\TYPO3\CMS\Core\Utility\GeneralUtility::_POST('selectedcategory')) : 0;
 		}
 		$this->pos = $this->piVars['pos'] ? $this->piVars['pos'] : 0;
 				
 		$this->categorySelector = "";
 
-		$ttcontentID = explode(":", $this->cObj->currentRecord);
+		$ttcontentID = \TYPO3\CMS\Core\Utility\GeneralUtility::trimExplode(":", $this->cObj->currentRecord);
 		$ttcontentID = $ttcontentID[1];
 	
 		//Javascript Function
@@ -234,7 +234,7 @@ class tx_kbeventboard_pi1 extends tslib_pibase {
 		foreach($pagesIdList as $index => $root) {
 			$selectedPids .= (($index == 0)?"":",").$this->getRecursiveUidList($root,$this->startingpointRecursiveLevel);
 		}
-		$selectedPidsList = explode(',',$selectedPids);
+		$selectedPidsList = \TYPO3\CMS\Core\Utility\GeneralUtility::trimExplode(',',$selectedPids);
 		$selectedPidsList = array_unique($selectedPidsList);
 		
 		foreach($selectedPidsList as $pageId){
@@ -264,7 +264,7 @@ class tx_kbeventboard_pi1 extends tslib_pibase {
 		    }
 		}
 		$sqlpids = $sqlpids." AND ev.pid = lo.pid)";
-		
+
 		// ########## BEGIN COUNT DATA ##################
 		if($this->selectedcategory > 0){
 		
@@ -472,10 +472,10 @@ class tx_kbeventboard_pi1 extends tslib_pibase {
 			if($this->showImages){
 				if($row['images'] != ""){
 					// if more then 1 image:
-					$imageList = explode(',',$row['images']);
-					$imageAltTagList = explode(PHP_EOL,$row['imagesalt']);
-					$imageTitleTagList = explode(PHP_EOL,$row['imagestitle']);
-					$imageSubTitleTextList = explode(PHP_EOL,$row['imagessubtitle']);
+					$imageList = \TYPO3\CMS\Core\Utility\GeneralUtility::trimExplode(',',$row['images']);
+					$imageAltTagList = \TYPO3\CMS\Core\Utility\GeneralUtility::trimExplode(PHP_EOL,$row['imagesalt']);
+					$imageTitleTagList = \TYPO3\CMS\Core\Utility\GeneralUtility::trimExplode(PHP_EOL,$row['imagestitle']);
+					$imageSubTitleTextList = \TYPO3\CMS\Core\Utility\GeneralUtility::trimExplode(PHP_EOL,$row['imagessubtitle']);
 					$this->eventImages = "";
 					
 					if($this->showAllImages){
@@ -516,7 +516,7 @@ class tx_kbeventboard_pi1 extends tslib_pibase {
 			// Adds hook for processing of extra markers
 			if (is_array($GLOBALS['TYPO3_CONF_VARS']['EXTCONF']['kb_eventboard/pi1/class.tx_kbeventboard_pi1.php']['showStandardMarkerHook'])) {
 				foreach($GLOBALS['TYPO3_CONF_VARS']['EXTCONF']['kb_eventboard/pi1/class.tx_kbeventboard_pi1.php']['showStandardMarkerHook'] as $_classRef) {
-					$_procObj = & t3lib_div::getUserObj($_classRef);
+					$_procObj = & \TYPO3\CMS\Core\Utility\GeneralUtility::getUserObj($_classRef);
 					$marker = $_procObj->showStandardMarker($marker, $row, $this->conf, $this);
 				}
 			}
@@ -590,7 +590,7 @@ class tx_kbeventboard_pi1 extends tslib_pibase {
 		if(isset($this->piVars['selectedcategory'])){
 			$this->selectedcategory = $this->piVars['selectedcategory'];
 		}else{
-			$this->selectedcategory = $GLOBALS['TYPO3_DB']->cleanIntList(t3lib_div::_POST('selectedcategory')) ? $GLOBALS['TYPO3_DB']->cleanIntList(t3lib_div::_POST('selectedcategory')) : 0;
+			$this->selectedcategory = $GLOBALS['TYPO3_DB']->cleanIntList(\TYPO3\CMS\Core\Utility\GeneralUtility::_POST('selectedcategory')) ? $GLOBALS['TYPO3_DB']->cleanIntList(\TYPO3\CMS\Core\Utility\GeneralUtility::_POST('selectedcategory')) : 0;
 		}
 		$this->pos = $this->piVars['pos'] ? $this->piVars['pos'] : 0;
 		
@@ -600,7 +600,7 @@ class tx_kbeventboard_pi1 extends tslib_pibase {
 
 			$this->categorySelector = "";
 
-			$ttcontentID = explode(":", $this->cObj->currentRecord);
+			$ttcontentID = \TYPO3\CMS\Core\Utility\GeneralUtility::trimExplode(":", $this->cObj->currentRecord);
 			$ttcontentID = $ttcontentID[1];
 		
 			//Javascript Function
@@ -760,10 +760,10 @@ class tx_kbeventboard_pi1 extends tslib_pibase {
 				if($this->showImages){
 					if($row['images'] != ""){
 						// if more then 1 image:
-						$imageList = explode(',',$row['images']);
-						$imageAltTagList = explode(PHP_EOL,$row['imagesalt']);
-						$imageTitleTagList = explode(PHP_EOL,$row['imagestitle']);
-						$imageSubTitleTextList = explode(PHP_EOL,$row['imagessubtitle']);
+						$imageList = \TYPO3\CMS\Core\Utility\GeneralUtility::trimExplode(',',$row['images']);
+						$imageAltTagList = \TYPO3\CMS\Core\Utility\GeneralUtility::trimExplode(PHP_EOL,$row['imagesalt']);
+						$imageTitleTagList = \TYPO3\CMS\Core\Utility\GeneralUtility::trimExplode(PHP_EOL,$row['imagestitle']);
+						$imageSubTitleTextList = \TYPO3\CMS\Core\Utility\GeneralUtility::trimExplode(PHP_EOL,$row['imagessubtitle']);
 						$this->eventImages = "";
 						
 						if($this->showAllImages){
@@ -814,7 +814,7 @@ class tx_kbeventboard_pi1 extends tslib_pibase {
 				// Adds hook for processing of extra markers
 				if (is_array($GLOBALS['TYPO3_CONF_VARS']['EXTCONF']['kb_eventboard/pi1/class.tx_kbeventboard_pi1.php']['showSingleViewMarkerHook'])) {
 					foreach($GLOBALS['TYPO3_CONF_VARS']['EXTCONF']['kb_eventboard/pi1/class.tx_kbeventboard_pi1.php']['showSingleViewMarkerHook'] as $_classRef) {
-						$_procObj = & t3lib_div::getUserObj($_classRef);
+						$_procObj = & \TYPO3\CMS\Core\Utility\GeneralUtility::getUserObj($_classRef);
 						$marker = $_procObj->showSingleViewMarker($marker, $row, $this->conf, $this);
 					}
 				}
@@ -851,7 +851,7 @@ class tx_kbeventboard_pi1 extends tslib_pibase {
 	 */
 	function showFrontpage() {
 
-		$ttcontentID = explode(":", $this->cObj->currentRecord);
+		$ttcontentID = \TYPO3\CMS\Core\Utility\GeneralUtility::trimExplode(":", $this->cObj->currentRecord);
 		$ttcontentID = $ttcontentID[1];
 	
 		//Javascript Function
@@ -1051,10 +1051,10 @@ class tx_kbeventboard_pi1 extends tslib_pibase {
 			if($this->showImages){
 				if($row['images'] != ""){
 					// if more then 1 image:
-					$imageList = explode(',',$row['images']);
-					$imageAltTagList = explode(PHP_EOL,$row['imagesalt']);
-					$imageTitleTagList = explode(PHP_EOL,$row['imagestitle']);
-					$imageSubTitleTextList = explode(PHP_EOL,$row['imagessubtitle']);
+					$imageList = \TYPO3\CMS\Core\Utility\GeneralUtility::trimExplode(',',$row['images']);
+					$imageAltTagList = \TYPO3\CMS\Core\Utility\GeneralUtility::trimExplode(PHP_EOL,$row['imagesalt']);
+					$imageTitleTagList = \TYPO3\CMS\Core\Utility\GeneralUtility::trimExplode(PHP_EOL,$row['imagestitle']);
+					$imageSubTitleTextList = \TYPO3\CMS\Core\Utility\GeneralUtility::trimExplode(PHP_EOL,$row['imagessubtitle']);
 					$this->eventImages = "";
 					
 					if($this->showAllImages){
@@ -1111,7 +1111,7 @@ class tx_kbeventboard_pi1 extends tslib_pibase {
 			// Adds hook for processing of extra markers
 			if (is_array($GLOBALS['TYPO3_CONF_VARS']['EXTCONF']['kb_eventboard/pi1/class.tx_kbeventboard_pi1.php']['showFrontpageMarkerHook'])) {
 				foreach($GLOBALS['TYPO3_CONF_VARS']['EXTCONF']['kb_eventboard/pi1/class.tx_kbeventboard_pi1.php']['showFrontpageMarkerHook'] as $_classRef) {
-					$_procObj = & t3lib_div::getUserObj($_classRef);
+					$_procObj = & \TYPO3\CMS\Core\Utility\GeneralUtility::getUserObj($_classRef);
 					$marker = $_procObj->showFrontpageMarker($marker, $row, $this->conf, $this);
 				}
 			}
@@ -1132,7 +1132,7 @@ class tx_kbeventboard_pi1 extends tslib_pibase {
 	 */
 	function showContextCol() {
 		
-		$ttcontentID = explode(":", $this->cObj->currentRecord);
+		$ttcontentID = \TYPO3\CMS\Core\Utility\GeneralUtility::trimExplode(":", $this->cObj->currentRecord);
 		$ttcontentID = $ttcontentID[1];
 		
 		// prepare sql statement for categories set in flexform:
@@ -1234,8 +1234,7 @@ class tx_kbeventboard_pi1 extends tslib_pibase {
 		
 		//Print Records
 		while ($row = $GLOBALS['TYPO3_DB']->sql_fetch_assoc($res)) {
-	
-		
+
 			// even_odd style sheet class:
 			$marker["###EVEN_ODD###"] =  ($this->spanindex % 2 == 0) ? " ".$this->csseven : " ". $this->cssodd;
 			
@@ -1287,16 +1286,16 @@ class tx_kbeventboard_pi1 extends tslib_pibase {
 			if($this->showImages){
 				if($row['images'] != ""){
 					// if more then 1 image:
-					$imageList = explode(',',$row['images']);
-					$imageAltTagList = explode(PHP_EOL,$row['imagesalt']);
-					$imageTitleTagList = explode(PHP_EOL,$row['imagestitle']);
-					$imageSubTitleTextList = explode(PHP_EOL,$row['imagessubtitle']);
+					$imageList = \TYPO3\CMS\Core\Utility\GeneralUtility::trimExplode(',',$row['images']);
+					$imageAltTagList = \TYPO3\CMS\Core\Utility\GeneralUtility::trimExplode(PHP_EOL,$row['imagesalt']);
+					$imageTitleTagList = \TYPO3\CMS\Core\Utility\GeneralUtility::trimExplode(PHP_EOL,$row['imagestitle']);
+					$imageSubTitleTextList = \TYPO3\CMS\Core\Utility\GeneralUtility::trimExplode(PHP_EOL,$row['imagessubtitle']);
 					
 					$this->eventImages = "";
 					
 					if($this->showAllImages){
 						foreach($imageList as $img){
-							$this->eventImages .= $this->getEventImage($img,'eventpicsContext.');
+							$this->eventImages .= $this->getEventImage($img, 'eventpicsContext.', '', '');
 						}
 						for($i=0;$i<count($imageList);$i++){
 							$this->eventImages .= $this->getEventImage($imageList[$i],'eventpicsContext.',$imageAltTagList[$i],$imageTitleTagList[$i]);
@@ -1332,7 +1331,7 @@ class tx_kbeventboard_pi1 extends tslib_pibase {
 			// Adds hook for processing of extra markers
 			if (is_array($GLOBALS['TYPO3_CONF_VARS']['EXTCONF']['kb_eventboard/pi1/class.tx_kbeventboard_pi1.php']['showContextColMarkerHook'])) {
 				foreach($GLOBALS['TYPO3_CONF_VARS']['EXTCONF']['kb_eventboard/pi1/class.tx_kbeventboard_pi1.php']['showContextColMarkerHook'] as $_classRef) {
-					$_procObj = & t3lib_div::getUserObj($_classRef);
+					$_procObj = & \TYPO3\CMS\Core\Utility\GeneralUtility::getUserObj($_classRef);
 					$marker = $_procObj->showContextColMarker($marker, $row, $this->conf, $this);
 				}
 			}
@@ -1343,9 +1342,21 @@ class tx_kbeventboard_pi1 extends tslib_pibase {
 
 		return $tmpContent;
 	}	
-	
-	/* render location image as defined in TS */
-	function getImage($imageName,$alttag,$titletag){
+
+	/**
+	 * render location image as defined in TS
+	 *
+	 * @param string $imageName
+	 * @param string $alttag
+	 * @param string $titletag
+	 * @return string
+	 */
+	function getImage($imageName, $alttag = '', $titletag = '') {
+
+		if (empty($imageName)) {
+			return '';
+		}
+
 		//Get image-config from typoscript
 		$imageConfig         = $this->conf['thumb.'];
 		//Set image Path
@@ -1354,8 +1365,22 @@ class tx_kbeventboard_pi1 extends tslib_pibase {
 		$imageConfig['titleText'] = $titletag;
 		return $this->cObj->IMAGE($imageConfig);
 	}
-	/* render event images as defined in TS */
-	function getEventImage($imageName,$confStyle,$alttag,$titletag){
+
+	/**
+	 * render event images as defined in TS
+	 *
+	 * @param string $imageName
+	 * @param array $confStyle
+	 * @param string $alttag
+	 * @param string $titletag
+	 * @return string
+	 */
+	function getEventImage($imageName, $confStyle, $alttag = '', $titletag = '') {
+
+		if(empty($imageName)) {
+			return '';
+		}
+
 		//Get image-config from typoscript
 		$imageConfig         = $this->conf[$confStyle];
 		
@@ -1393,8 +1418,8 @@ class tx_kbeventboard_pi1 extends tslib_pibase {
 			'uid',
 			'pages',
 			'pid IN (' . $GLOBALS['TYPO3_DB']->cleanIntList($parentUid) . ') '
-				. t3lib_BEfunc::deleteClause('pages')
-				. t3lib_BEfunc::versioningPlaceholderClause('pages')
+				. \TYPO3\CMS\Backend\Utility\BackendUtility::deleteClause('pages')
+				. \TYPO3\CMS\Backend\Utility\BackendUtility::versioningPlaceholderClause('pages')
 			);
 		if($depth > 0){
 			while ($row = $GLOBALS['TYPO3_DB']->sql_fetch_assoc($res)) {
